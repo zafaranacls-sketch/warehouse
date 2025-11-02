@@ -144,6 +144,7 @@ async function addToAPI(item) {
   });
   const result = await response.json();
   console.log("✅ تمت الإضافة:", result);
+  loadFromAPI();
   return result;
 }
 
