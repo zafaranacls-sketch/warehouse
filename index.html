@@ -144,7 +144,7 @@ async function load() {
       sh = { id: shelf, boxes: [] };
       rk.shelves.push(sh);
     }
-    sh.boxes.push(${box} (${type}));
+    sh.boxes.push('${box} (${type})');
   });
   state.stores = Object.values(storesMap);
   renderStores();
