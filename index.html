@@ -125,7 +125,7 @@ function performSearch(q){const results=[];state.stores.forEach(st=>{st.racks.fo
 backBtn.onclick=()=>{if(state.view==='racks')renderStores();else if(state.view==='shelves')renderRacks();}
 addBtn.onclick=()=>openModalForAdd();
 init();
-  const apiUrl = "https://690735f7b1879c890ed91d9a.mockapi.io/warehouse";
+  const apiUrl = "https://690735f7b1879c890ed91d99.mockapi.io/warehouse";
 
 // تحميل البيانات من MockAPI
 async function loadFromAPI() {
