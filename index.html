@@ -107,9 +107,49 @@ const STORE_DATA = [
 
 const app=document.getElementById('app'),searchInput=document.getElementById('searchInput'),searchBtn=document.getElementById('searchBtn'),addBtn=document.getElementById('addBtn'),backBtn=document.getElementById('backBtn'),modal=document.getElementById('modal');
 let state={stores:STORE_DATA,view:'stores',storeIndex:null,rackIndex:null};
-function save(){localStorage.setItem('warehouse_v1',JSON.stringify(state.stores));}
-function load(){const raw=localStorage.getItem('warehouse_v1');if(raw)return JSON.parse(raw);return null;}
-function init(){const local=load();if(local)state.stores=local;renderStores();}
+// حفظ واسترجاع البيانات من Google Sheet عبر API_URL
+
+async function apiAdd(row){ // row = {store,rack,shelf,box,type}
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(row)
+  });
+  return await res.json();
+}
+
+async function apiList(){
+  const res = await fetch(API_URL + "?action=list");
+  return await res.json();
+}
+
+async function load(){
+  const rows = await apiList();
+  console.log("Data loaded:", rows);
+  // تحويل البيانات من صفوف إلى نفس هيكل المخازن الأصلي
+  const storesMap = {};
+  rows.forEach(r=>{
+    const st = r[1] || "المخزن 1";
+    const rack = r[2] || "Rack 1";
+    const shelf = r[3] || "SH1";
+    const box = r[4] || "";
+    const type = r[5] || "";
+    if(!storesMap[st]) storesMap[st] = {name:st, racks:[]};
+    let rk = storesMap[st].racks.find(x=>x.id===rack);
+    if(!rk){rk={id:rack,label:"",shelves:[]};storesMap[st].racks.push(rk);}
+    let sh = rk.shelves.find(x=>x.id===shelf);
+    if(!sh){sh={id:shelf,boxes:[]};rk.shelves.push(sh);}
+    sh.boxes.push(${box} (${type}));
+  });
+  state.stores = Object.values(storesMap);
+  renderStores();
+}
+
+function save(){ /* لم نعد نستخدم localStorage */ }
+
+async function init(){
+  await load();
+}
 function clearMain(){app.innerHTML='';}
 function renderStores(){state.view='stores';backBtn.style.display='none';clearMain();const grid=document.createElement('div');grid.className='grid';state.stores.forEach((st,i)=>{const card=document.createElement('div');card.className='card';card.innerHTML=`<h2>${st.name}</h2><p>Racks: ${st.racks.length}</p>`;card.addEventListener('click',()=>openStore(i));grid.appendChild(card);});app.appendChild(grid);}
 function openStore(i){state.storeIndex=i;state.view='racks';backBtn.style.display='inline-block';renderRacks();}
