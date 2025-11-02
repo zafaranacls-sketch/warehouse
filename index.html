@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -126,42 +125,6 @@ function performSearch(q){const results=[];state.stores.forEach(st=>{st.racks.fo
 backBtn.onclick=()=>{if(state.view==='racks')renderStores();else if(state.view==='shelves')renderRacks();}
 addBtn.onclick=()=>openModalForAdd();
 init();
-  const apiUrl = "https://690735f7b1879c890ed91d99.mockapi.io/warehouse";
-
-// تحميل البيانات من MockAPI
-async function loadFromAPI() {
-  const response = await fetch(apiUrl);
-  const data = await response.json();
-  console.log("📦 بيانات من MockAPI:", data);
-  return data;
-}
-
-// إضافة صنف جديد إلى MockAPI
-async function addToAPI(item) {
-  const response = await fetch(apiUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(item)
-  });
-  const result = await response.json();
-  console.log("✅ تمت الإضافة:", result);
-  loadFromAPI();
-  return result;
-}
-
-// مثال للتجربة فقط (احذفه بعد التأكد)
-//addToAPI({
- // name: "تفاح",
- // store: "Store A",
- //rack: "R1",
-  //shelf: "S2",
- // box: "B5",
- // type: "فاكهة",
- // quantity: 20,
-  //date: new Date().toISOString()
-//});
-
-loadFromAPI();
 </script>
 </body>
 </html>
