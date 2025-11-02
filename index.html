@@ -66,30 +66,8 @@ main{padding:18px}
   </div>
 </div>
 
-<!-- ---------------- Firebase SDK (compat) ---------------- -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
 <script>
-// ---- ضع هنا إعدادات Firebase بتاعتك (اللي بعتها لي) ----
-const firebaseConfig = {
-  apiKey: "AIzaSyDTDFG3R62rgo5rFgF4jbojvI0S5wo1Nv8",
-  authDomain: "warehouse-system-503ad.firebaseapp.com",
-  databaseURL: "https://warehouse-system-503ad-default-rtdb.firebaseio.com",
-  projectId: "warehouse-system-503ad",
-  storageBucket: "warehouse-system-503ad.firebasestorage.app",
-  messagingSenderId: "719762875859",
-  appId: "1:719762875859:web:7ab986cf4a59d601133b26",
-  measurementId: "G-295DRTYZB8"
-};
-
-// تهيئة Firebase (compat API)
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-// --------------------------------------------------------
-
-/* بيانات محلية افتراضية (تستخدم فقط لو الداتابيز فاضية) */
+// بيانات المخازن (المخزن 1 فعلي والباقي فاضي)
 const STORE_DATA = [
   {name:'المخزن 1', racks:[
     {id:'Rack 1', label:'TE-MESH', shelves:[
@@ -121,103 +99,67 @@ const STORE_DATA = [
     ]}
   ]},
   {"name":"المخزن 2","racks":[{"id":"Rack 1","label":"FIBER","shelves":[{"id":"SH1","note":"UN USED PATCH","boxes":[]},{"id":"SH2","note":"LOOPS, SC/SC APC, SC/FC, LC/FC, SC APC/FC","boxes":[]},{"id":"SH3","note":"FC/FC, LC/SCAPC, SC/SC, SC APC/SC APC","boxes":[]},{"id":"SH4","note":"LC/LC, SC/LC","boxes":[]}]},{"id":"Rack 2","label":"SEACOME JOINTS & EIG JOINTS & AAE-1 & SMW5","shelves":[{"id":"SH1","note":"-","boxes":[]},{"id":"SH2","note":"SEACOME JOINTS","boxes":[]},{"id":"SH3","note":"EIG JOINTS, AAE-1 JOINTS, BOX HAVE POWER CABLE","boxes":[]},{"id":"SH4","note":"SMW5 JOINTS","boxes":[]}]},{"id":"Rack 3","label":"TE-PEASE","shelves":[{"id":"SH1","note":"-","boxes":[]},{"id":"SH2","note":"-","boxes":[]},{"id":"SH3","note":"3 BOXES TE-PEASE FIBER","boxes":["TE-PEASE-1","TE-PEASE-2","TE-PEASE-3"]},{"id":"SH4","note":"-","boxes":[]}]}]},
-  {"name":"المخزن 3","racks":[{"id":"Rack 1","label":"GBI INFINIRA & UPG SMW5","shelves":[{"id":"SH1","note":"UPG SMW5","boxes":[]},{"id":"SH2","note":"GBI INFINIRA","boxes":["1","3","4","5","6","7","8","9","10","12","13","14","15","16","17","18","19","20","21","23","24","26","27","28","29","33","34","35"]},{"id":"SH3","note":"GBI INFINIRA","boxes":["2","11","36","37","25","22","44","45","46","47","50","41","42","48","49","30","38","39","40","32","43","31"]},{"id":"SH4","note":"GBI INFINIRA & SEACOME (POWER STAGE...)","boxes":["POWER-STAGE-1","1","2","3","5","7","6"]}]},{"id":"Rack 2","label":"UPG SMW5 & 2-AFRICA DEVICE","shelves":[{"id":"SH1","note":"UPG SMW5","boxes":[]},{"id":"SH2","note":"UPG SMW5","boxes":[]},{"id":"SH3","note":"UPG SMW5","boxes":[]},{"id":"SH4","note":"2-AFRICA DEVICE (ELECTRODING GENERATOR)","boxes":[]}]},{"id":"Rack 3","label":"TE-PEASE & EIG PFE & EIG DEVICES","shelves":[{"id":"SH1","boxes":["18/2","19"]},{"id":"SH2","note":"TE-PEASE","boxes":["1","2","3","4","5","6","7","8","9","10","12","13","14","15","16","17"]},{"id":"SH3","note":"EIG PFE","boxes":["1","2","3","4","5","6","7","8","9","10","11","12","15","16","17","18","19","20","21","22","23","24","25","27","28","29","30","31","32","33","35","36","37","38","39","40","41"]},{"id":"SH4","note":"EIG DEVICES & OTDR/OSA etc","boxes":["BOX-11","EIG-OTDR","EIG-OSA","EIG-TINSLY","EIG-POWER-METER","EIG-DTA","EIG-FUSION-SPLUKER","EIG-PFE"]}]},{"id":"Rack 4","label":"WE-CONNECT & MATERIAL","shelves":[{"id":"SH1","note":"","boxes":[]},{"id":"SH2","note":"WE-CONNECT","boxes":[]},{"id":"SH3","note":"CABLES, ROT MATERIAL","boxes":[]},{"id":"SH4","note":"CABLES, FIBER RUNNER","boxes":[]}]}]},
-  {"name":"المخزن 4","racks":[{"id":"Rack 1","label":"SEACOME","shelves":[{"id":"SH1","note":"","boxes":[]},{"id":"SH2","note":"SEACOME TYCO","boxes":["15","16","17","18","7","14","1","2","3"]},{"id":"SH3","note":"SEACOME CIENA","boxes":["2","3","6","9","11","13","15","16","17","18","19","21","22","23","26","30","31","33","34","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","59","35"]},{"id:'SH4', note:'SEACOME PFE', boxes:['1','2','3','4','5','6','7','8','9','11','12','13']}]},{"id":"Rack 2","label":"TATA & EIG ALCATEL & IN/OUT UNKNOWN STOCK","shelves":[{"id":"SH1","note":"EMPTY BOXES FOR TATA, 3 FIBER BOXES","boxes":[]},{"id":"SH2","note":"EIG ALCATEL CHASSIS","boxes":[]},{"id":"SH3","note":"FILLER","boxes":[]},{"id":"SH4","note":"IN/OUT UNKNOWN STOCK","boxes":[]}]},{"id":"Rack 3","label":"EMPTY BOXES & EITHER CABLES","shelves":[{"id":"SH1","note":"","boxes":[]},{"id":"SH2","note":"EMPTY BOXES","boxes":[]},{"id":"SH3","note":"EMPTY BOXES, EBOX HAVE EITHER CABLES","boxes":[]},{"id":"SH4","note":"EMPTY BOXES","boxes":[]}]},{"id":"Rack 4","label":"FIBER & EIG ALCATEL FAULTY CARDS & FILLER & GBI ROT MATERIAL","shelves":[{"id":"SH1","note":"6 FIBER BOXES, EMPTY BOXES","boxes":[]},{"id":"SH2","note":"4 FIBER BOXES","boxes":[]},{"id":"SH3","note":"EMPTY BOXES","boxes":[]},{"id":"SH4","note":"EIG ALCATEL FAULTY CARDS & FILLER & GBI ROT MATERIAL","boxes":[]}]}]}
+  {"name":"المخزن 3","racks":[{"id":"Rack 1","label":"GBI INFINIRA & UPG SMW5","shelves":[{"id":"SH1","note":"UPG SMW5","boxes":[]},{"id":"SH2","note":"GBI INFINIRA","boxes":["1","3","4","5","6","7","8","9","10","12","13","14","15","16","17","18","19","20","21","23","24","26","27","28","29","33","34","35"]},{"id":"SH3","note":"GBI INFINIRA","boxes":["2","11","36","37","25","22","44","45","46","47","50","41","42","48","49","30","38","39","40","32","43","31"]},{"id":"SH4","note":"GBI INFINIRA & SEACOME (POWER STAGE...)","boxes":["POWER-STAGE-1","1","2","3","5","7","6"]}]},{"id":"Rack 2","label":"UPG SMW5 & 2-AFRICA DEVICE","shelves":[{"id":"SH1","note":"UPG SMW5","boxes":[]},{"id":"SH2","note":"UPG SMW5","boxes":[]},{"id":"SH3","note":"UPG SMW5","boxes":[]},{"id":"SH4","note":"2-AFRICA DEVICE (ELECTRODING GENERATOR)","boxes":[]}]},{"id":"Rack 3","label":"TE-PEASE & EIG PFE & EIG DEVICES","shelves":[{"id":"SH1","boxes":["18/2","19"]},{"id":"SH2","note":"TE-PEASE","boxes":["1","2","3","4","5","6","7","8","9","10","12","13","14","15","16","17"]},{"id":"SH3","note":"EIG PFE","boxes":["1","2","3","4","5","6","7","8","9","10","11","12","15","16","17","18","19","20","21","22","23","24","25","27","28","29","30","31","32","33","35","36","37","38","39","40","41"]},{"id":"SH4","note":"EIG DEVICES & OTDR/OSA etc","boxes":["BOX-11","EIG-OTDR","EIG-OSA","EIG-TINSLY","EIG-POWER-METER","EIG-DTA","EIG-FUSION-SPLUKER","EIG-PFE"]}]},{"id":"Rack 4","label":"WE-CONNECT & MATERIAL","shelves":[{"id":"SH1","note":"","boxes":[]},{"id":"SH2","note":"WE-CONNECT","boxes":[]},{"id":"SH3","note":"CABLES, ROT MATERIAL","boxes":[]},{"id":"SH4","note":"CABLES, FIBER RUNNER","boxes":[]}]},{"id":"Rack 5","label":"WE-CONNECT","shelves":[{"id":"SH1","note":"WE-CONNECT","boxes":[]},{"id":"SH2","note":"WE-CONNECT","boxes":[]},{"id":"SH3","note":"WE-CONNECT","boxes":[]},{"id":"SH4","note":"WE-CONNECT","boxes":[]},{"id":"SH5","note":"WE-CONNECT","boxes":[]}]}]},
+  {"name":"المخزن 4","racks":[{"id":"Rack 1","label":"SEACOME","shelves":[{"id":"SH1","note":"","boxes":[]},{"id":"SH2","note":"SEACOME TYCO","boxes":["15","16","17","18","7","14","1","2","3"]},{"id":"SH3","note":"SEACOME CIENA","boxes":["2","3","6","9","11","13","15","16","17","18","19","21","22","23","26","30","31","33","34","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","59","35"]},{"id":"SH4","note":"SEACOME PFE","boxes":["1","2","3","4","5","6","7","8","9","11","12","13"]}]},{"id":"Rack 2","label":"TATA & EIG ALCATEL & IN/OUT UNKNOWN STOCK","shelves":[{"id":"SH1","note":"EMPTY BOXES FOR TATA, 3 FIBER BOXES","boxes":[]},{"id":"SH2","note":"EIG ALCATEL CHASSIS","boxes":[]},{"id":"SH3","note":"FILLER","boxes":[]},{"id":"SH4","note":"IN/OUT UNKNOWN STOCK","boxes":[]}]},{"id":"Rack 3","label":"EMPTY BOXES & EITHER CABLES","shelves":[{"id":"SH1","note":"","boxes":[]},{"id":"SH2","note":"EMPTY BOXES","boxes":[]},{"id":"SH3","note":"EMPTY BOXES, EBOX HAVE EITHER CABLES","boxes":[]},{"id":"SH4","note":"EMPTY BOXES","boxes":[]}]},{"id":"Rack 4","label":"FIBER & EIG ALCATEL FAULTY CARDS & FILLER & GBI ROT MATERIAL","shelves":[{"id":"SH1","note":"6 FIBER BOXES, EMPTY BOXES","boxes":[]},{"id":"SH2","note":"4 FIBER BOXES","boxes":[]},{"id":"SH3","note":"EMPTY BOXES","boxes":[]},{"id":"SH4","note":"EIG ALCATEL FAULTY CARDS & FILLER & GBI ROT MATERIAL","boxes":[]}]}]}
 ];
 
-/* ----------------------------------------------
-   State & DOM references
-   ---------------------------------------------- */
-const app=document.getElementById('app'),
-      searchInput=document.getElementById('searchInput'),
-      searchBtn=document.getElementById('searchBtn'),
-      addBtn=document.getElementById('addBtn'),
-      backBtn=document.getElementById('backBtn'),
-      modal=document.getElementById('modal');
-
+const app=document.getElementById('app'),searchInput=document.getElementById('searchInput'),searchBtn=document.getElementById('searchBtn'),addBtn=document.getElementById('addBtn'),backBtn=document.getElementById('backBtn'),modal=document.getElementById('modal');
 let state={stores:STORE_DATA,view:'stores',storeIndex:null,rackIndex:null};
-
-/* ---------------- Firebase integration -------------- */
-
-/**
- * save() - يكتب الـ state.stores للداتابيز
- */
-async function save(){
-  try{
-    await firebase.database().ref("stores").set(state.stores);
-    // console.log('saved to firebase');
-  }catch(e){
-    alert('خطأ في الحفظ إلى Firebase: '+e.message);
-  }
-}
-
-/**
- * listenToRemote() - يربط مستمع realtime على المسار "stores"
- * لما تتغير البيانات في Firebase، يحدث state ويعيد العرض
- */
-function listenToRemote(){
-  const refStores = firebase.database().ref("stores");
-  refStores.on('value', snapshot => {
-    const val = snapshot.val();
-    if(val){
-      state.stores = val;
-      // لو احنا في عرض المحلات نحدثه برضه بشكل ملطف
-      if(state.view === 'stores') renderStores();
-      else if(state.view === 'racks') renderRacks();
-      else if(state.view === 'shelves') renderShelves();
-    } else {
-      // لو الداتابيز فاضية نكتب البيانات الافتراضية
-      firebase.database().ref("stores").set(state.stores);
-    }
-  }, err => {
-    console.error('firebase read error', err);
-  });
-}
-
-/* --------------- Initialization ----------------- */
-
-async function init(){
-  // نحاول نقرأ أول مرة من Firebase (احتمال تأخير الشبكة)
-  try{
-    const snapshot = await firebase.database().ref("stores").get();
-    if(snapshot.exists()){
-      state.stores = snapshot.val();
-    } else {
-      // لو مفيش بيانات فـ اكتب الافتراضي
-      await firebase.database().ref("stores").set(state.stores);
-    }
-  }catch(e){
-    console.warn('خطأ عند التحميل من Firebase (سيستخدم البيانات المحلية):', e.message);
-  }
-
-  // ثبت المستمع الحي علشان أي تغيير يظهر عند الكل
-  listenToRemote();
-
-  // اعرض الواجهة
-  renderStores();
-}
-
-/* -------------- الباقي من كود الواجهة (بدون تغيير كبير) -------------- */
-
+function save(){localStorage.setItem('warehouse_v1',JSON.stringify(state.stores));}
+function load(){const raw=localStorage.getItem('warehouse_v1');if(raw)return JSON.parse(raw);return null;}
+function init(){const local=load();if(local)state.stores=local;renderStores();}
 function clearMain(){app.innerHTML='';}
-function renderStores(){state.view='stores';backBtn.style.display='none';clearMain();const grid=document.createElement('div');grid.className='grid';state.stores.forEach((st,i)=>{const card=document.createElement('div');card.className='card';card.innerHTML=<h2>${st.name}</h2><p>Racks: ${st.racks.length}</p>;card.addEventListener('click',()=>openStore(i));grid.appendChild(card);});app.appendChild(grid);}
+function renderStores(){state.view='stores';backBtn.style.display='none';clearMain();const grid=document.createElement('div');grid.className='grid';state.stores.forEach((st,i)=>{const card=document.createElement('div');card.className='card';card.innerHTML=`<h2>${st.name}</h2><p>Racks: ${st.racks.length}</p>`;card.addEventListener('click',()=>openStore(i));grid.appendChild(card);});app.appendChild(grid);}
 function openStore(i){state.storeIndex=i;state.view='racks';backBtn.style.display='inline-block';renderRacks();}
-function renderRacks(){clearMain();const st=state.stores[state.storeIndex];const grid=document.createElement('div');grid.className='grid';st.racks.forEach((rk,ri)=>{const card=document.createElement('div');card.className='card rack-card';card.innerHTML=<h2>${rk.id}</h2><p>${rk.label||''}</p><div class="box-list">${rk.shelves.map(s=><span class="box">${s.id} (${(s.boxes||[]).length})</span>).join('')}</div>;card.addEventListener('click',()=>openRack(ri));grid.appendChild(card);});const actions=document.createElement('div');actions.className='actions';const addRack=document.createElement('button');addRack.textContent='➕ إضافة Rack';addRack.className='small';addRack.onclick=async ()=>{const id=prompt('اسم الRack مثلاً Rack 6');if(!id)return;st.racks.push({id,label:'',shelves:[]});await save();renderRacks();};actions.appendChild(addRack);app.appendChild(grid);app.appendChild(actions);}
+function renderRacks(){clearMain();const st=state.stores[state.storeIndex];const grid=document.createElement('div');grid.className='grid';st.racks.forEach((rk,ri)=>{const card=document.createElement('div');card.className='card rack-card';card.innerHTML=`<h2>${rk.id}</h2><p>${rk.label||''}</p><div class="box-list">${rk.shelves.map(s=>`<span class="box">${s.id} (${s.boxes.length})</span>`).join('')}</div>`;card.addEventListener('click',()=>openRack(ri));grid.appendChild(card);});const actions=document.createElement('div');actions.className='actions';const addRack=document.createElement('button');addRack.textContent='➕ إضافة Rack';addRack.className='small';addRack.onclick=()=>{const id=prompt('اسم الRack مثلاً Rack 6');if(!id)return;st.racks.push({id,label:'',shelves:[]});save();renderRacks();};actions.appendChild(addRack);app.appendChild(grid);app.appendChild(actions);}
 function openRack(index){state.rackIndex=index;state.view='shelves';backBtn.style.display='inline-block';renderShelves();}
-function renderShelves(){clearMain();const st=state.stores[state.storeIndex];const rk=st.racks[state.rackIndex];const container=document.createElement('div');container.innerHTML=<h2>${st.name} › ${rk.id} <small style='color:#666;margin-right:8px'>${rk.label||''}</small></h2>;rk.shelves.forEach((sh,si)=>{const card=document.createElement('div');card.className='card';const boxesHtml=((sh.boxes||[])||[]).map(b=><div class='box'><strong>${b}</strong><span class='meta'>${sh.note||''}</span><div style='margin-top:6px'><button class='small' onclick='editBox(${si},${JSON.stringify(b)})'>✏️</button> <button class='small' onclick='deleteBox(${si},${JSON.stringify(b)})'>🗑️</button> <a class='small' target='_blank' href='https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(st.name+"|"+rk.id+"|"+sh.id+"|"+b)}'>QR</a></div></div>).join('');card.innerHTML=<h3>${sh.id}</h3><p>${sh.note||''}</p><div class='box-list'>${boxesHtml}</div>;container.appendChild(card);});const controls=document.createElement('div');controls.className='actions';const addShelf=document.createElement('button');addShelf.textContent='➕ إضافة Shelf';addShelf.onclick=async ()=>{const id=prompt('اسم الShelf مثلاً SH4');if(!id)return;rk.shelves.push({id,boxes:[]});await save();renderShelves();};const addBox=document.createElement('button');addBox.textContent='➕ إضافة Box';addBox.onclick=()=>openModalForAdd();controls.appendChild(addShelf);controls.appendChild(addBox);app.appendChild(container);app.appendChild(controls);}
+function renderShelves(){clearMain();const st=state.stores[state.storeIndex];const rk=st.racks[state.rackIndex];const container=document.createElement('div');container.innerHTML=`<h2>${st.name} › ${rk.id} <small style='color:#666;margin-right:8px'>${rk.label||''}</small></h2>`;rk.shelves.forEach((sh,si)=>{const card=document.createElement('div');card.className='card';const boxesHtml=(sh.boxes||[]).map(b=>`<div class='box'><strong>${b}</strong><span class='meta'>${sh.note||''}</span><div style='margin-top:6px'><button class='small' onclick='editBox(${si},"${b}")'>✏️</button> <button class='small' onclick='deleteBox(${si},"${b}")'>🗑️</button> <a class='small' target='_blank' href='https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(st.name+"|"+rk.id+"|"+sh.id+"|"+b)}'>QR</a></div></div>`).join('');card.innerHTML=`<h3>${sh.id}</h3><p>${sh.note||''}</p><div class='box-list'>${boxesHtml}</div>`;container.appendChild(card);});const controls=document.createElement('div');controls.className='actions';const addShelf=document.createElement('button');addShelf.textContent='➕ إضافة Shelf';addShelf.onclick=()=>{const id=prompt('اسم الShelf مثلاً SH4');if(!id)return;rk.shelves.push({id,boxes:[]});save();renderShelves();};const addBox=document.createElement('button');addBox.textContent='➕ إضافة Box';addBox.onclick=()=>openModalForAdd();controls.appendChild(addShelf);controls.appendChild(addBox);app.appendChild(container);app.appendChild(controls);}
 function openModalForAdd(){modal.classList.remove('hidden');const sStore=document.getElementById('modalStore'),sRack=document.getElementById('modalRack'),sShelf=document.getElementById('modalShelf');sStore.innerHTML='';sRack.innerHTML='';sShelf.innerHTML='';state.stores.forEach((st,i)=>{const o=document.createElement('option');o.value=i;o.textContent=st.name;sStore.appendChild(o);});sStore.value=state.storeIndex??0;populateRacks();sStore.onchange=populateRacks;document.getElementById('modalBoxId').value='';document.getElementById('modalBoxType').value='';}
 function populateRacks(){const sStore=document.getElementById('modalStore'),sRack=document.getElementById('modalRack'),sShelf=document.getElementById('modalShelf');const st=state.stores[+sStore.value];sRack.innerHTML='';sShelf.innerHTML='';st.racks.forEach((r,ri)=>{const o=document.createElement('option');o.value=ri;o.textContent=r.id;sRack.appendChild(o);});sRack.onchange=()=>{const r=st.racks[+sRack.value];sShelf.innerHTML='';r.shelves.forEach((sh,si)=>{const o=document.createElement('option');o.value=si;o.textContent=sh.id;sShelf.appendChild(o);});};if(sRack.options.length>0)sRack.onchange();}
 document.getElementById('modalCancel').onclick=()=>{modal.classList.add('hidden');};
-document.getElementById('modalSave').onclick=async ()=>{const si=+document.getElementById('modalStore').value,ri=+document.getElementById('modalRack').value,shi=+document.getElementById('modalShelf').value,boxId=document.getElementById('modalBoxId').value.trim(),boxType=document.getElementById('modalBoxType').value.trim();if(!boxId){alert('ادخل رقم البوكس');return;}const st=state.stores[si];const shelf=st.racks[ri].shelves[shi];shelf.boxes = shelf.boxes || [];shelf.boxes.push(boxId);await save();modal.classList.add('hidden');renderShelves();};
-window.deleteBox=async function(shIndex,boxId){const st=state.stores[state.storeIndex];const rk=st.racks[state.rackIndex];const shelf=rk.shelves[shIndex];if(!confirm('امسح Box '+boxId+' ؟'))return;const idx=shelf.boxes.indexOf(boxId);if(idx>-1)shelf.boxes.splice(idx,1);await save();renderShelves();}
-window.editBox=async function(shIndex,boxId){const newVal=prompt('عدل رقم البوكس أو نوعه',boxId);if(newVal===null) return;const st=state.stores[state.storeIndex];const rk=st.racks[state.rackIndex];const shelf=rk.shelves[shIndex];const idx=shelf.boxes.indexOf(boxId);if(idx>-1){shelf.boxes[idx]=newVal;await save();renderShelves();}};
+document.getElementById('modalSave').onclick=()=>{const si=+document.getElementById('modalStore').value,ri=+document.getElementById('modalRack').value,shi=+document.getElementById('modalShelf').value,boxId=document.getElementById('modalBoxId').value.trim(),boxType=document.getElementById('modalBoxType').value.trim();if(!boxId){alert('ادخل رقم البوكس');return;}const st=state.stores[si];const shelf=st.racks[ri].shelves[shi];shelf.boxes.push(boxId);save();modal.classList.add('hidden');renderShelves();};
+window.deleteBox=function(shIndex,boxId){const st=state.stores[state.storeIndex];const rk=st.racks[state.rackIndex];const shelf=rk.shelves[shIndex];if(!confirm('امسح Box '+boxId+' ؟'))return;const idx=shelf.boxes.indexOf(boxId);if(idx>-1)shelf.boxes.splice(idx,1);save();renderShelves();}
+window.editBox=function(shIndex,boxId){const newVal=prompt('عدل رقم البوكس أو نوعه',boxId);if(!newVal)return;const st=state.stores[state.storeIndex];const rk=st.racks[state.rackIndex];const shelf=rk.shelves[shIndex];const idx=shelf.boxes.indexOf(boxId);if(idx>-1)shelf.boxes[idx]=newVal;save();renderShelves();}
 searchBtn.onclick=()=>{const q=(searchInput.value||'').trim();if(!q)return alert('اكتب اللي هتبحث عنه');performSearch(q);}
-function performSearch(q){const results=[];state.stores.forEach(st=>{st.racks.forEach(rk=>{rk.shelves.forEach(sh=>{(sh.boxes||[]).forEach(box=>{if(String(box).includes(q)||(sh.note||'').includes(q))results.push({store:st.name,rack:rk.id,shelf:sh.id,box});});});});});if(results.length===0){alert('لا توجد نتائج');return;}clearMain();const out=document.createElement('div');out.innerHTML=<h3>نتائج البحث (${results.length})</h3>;results.forEach(r=>{const c=document.createElement('div');c.className='card';c.innerHTML=<strong>${r.box}</strong> — ${r.store} › ${r.rack} › ${r.shelf} <div><a target='_blank' href='https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(r.store+'|'+r.rack+'|'+r.shelf+'|'+r.box)}'>QR</a></div>;out.appendChild(c);});app.appendChild(out);}
+function performSearch(q){const results=[];state.stores.forEach(st=>{st.racks.forEach(rk=>{rk.shelves.forEach(sh=>{(sh.boxes||[]).forEach(box=>{if(String(box).includes(q)||(sh.note||'').includes(q))results.push({store:st.name,rack:rk.id,shelf:sh.id,box});});});});});if(results.length===0){alert('لا توجد نتائج');return;}clearMain();const out=document.createElement('div');out.innerHTML=`<h3>نتائج البحث (${results.length})</h3>`;results.forEach(r=>{const c=document.createElement('div');c.className='card';c.innerHTML=`<strong>${r.box}</strong> — ${r.store} › ${r.rack} › ${r.shelf} <div><a target='_blank' href='https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(r.store+'|'+r.rack+'|'+r.shelf+'|'+r.box)}'>QR</a></div>`;out.appendChild(c);});app.appendChild(out);}
 backBtn.onclick=()=>{if(state.view==='racks')renderStores();else if(state.view==='shelves')renderRacks();}
 addBtn.onclick=()=>openModalForAdd();
-
-/* start */
 init();
+  const apiUrl = "https://690735f7b1879c890ed91d9a.mockapi.io/warehouse";
+
+// تحميل البيانات من MockAPI
+async function loadFromAPI() {
+  const response = await fetch(apiUrl);
+  const data = await response.json();
+  console.log("📦 بيانات من MockAPI:", data);
+  return data;
+}
+
+// إضافة صنف جديد إلى MockAPI
+async function addToAPI(item) {
+  const response = await fetch(apiUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(item)
+  });
+  const result = await response.json();
+  console.log("✅ تمت الإضافة:", result);
+  return result;
+}
+
+// مثال للتجربة فقط (احذفه بعد التأكد)
+addToAPI({
+  name: "تفاح",
+  store: "Store A",
+  rack: "R1",
+  shelf: "S2",
+  box: "B5",
+  type: "فاكهة",
+  quantity: 20,
+  date: new Date().toISOString()
+});
+
+loadFromAPI();
 </script>
 </body>
 </html>
