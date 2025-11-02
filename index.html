@@ -111,7 +111,7 @@ let state={stores:STORE_DATA,view:'stores',storeIndex:null,rackIndex:null};
 async function apiAdd(row) { // row = {store,rack,shelf,box,type}
   const res = await fetch(API_URL, {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(row)
   });
   return await res.json();
@@ -123,31 +123,48 @@ async function apiList() {
 }
 
 async function load() {
-  const rows = await apiList();
-  console.log("Data loaded:", rows);
+  try {
+    const rows = await apiList();
+    console.log("Data loaded:", rows);
 
-  const storesMap = {};
-  rows.slice(1).forEach(r => { // تجاهل أول صف (العناوين)
-    const st = r[1] || "المخزن 1";
-    const rack = r[2] || "Rack 1";
-    const shelf = r[3] || "SH1";
-    const box = r[4] || "";
-    const type = r[5] || "";
-    if (!storesMap[st]) storesMap[st] = { name: st, racks: [] };
-    let rk = storesMap[st].racks.find(x => x.id === rack);
-    if (!rk) {
-      rk = { id: rack, label: "", shelves: [] };
-      storesMap[st].racks.push(rk);
+    const storesMap = {};
+    // تأكد إن rows موجودة ومفيهاش خطأ
+    if (!Array.isArray(rows)) {
+      console.error("البيانات غير صحيحة:", rows);
+      return;
     }
-    let sh = rk.shelves.find(x => x.id === shelf);
-    if (!sh) {
-      sh = { id: shelf, boxes: [] };
-      rk.shelves.push(sh);
-    }
-    sh.boxes.push('${box} (${type})');
-  });
-  state.stores = Object.values(storesMap);
-  renderStores();
+
+    rows.slice(1).forEach(r => { // تجاهل الصف الأول (عناوين الأعمدة)
+      const st = r[1] || "المخزن 1";
+      const rack = r[2] || "Rack 1";
+      const shelf = r[3] || "SH1";
+      const box = r[4] || "";
+      const type = r[5] || "";
+
+      if (!storesMap[st]) storesMap[st] = { name: st, racks: [] };
+
+      let rk = storesMap[st].racks.find(x => x.id === rack);
+      if (!rk) {
+        rk = { id: rack, label: "", shelves: [] };
+        storesMap[st].racks.push(rk);
+      }
+
+      let sh = rk.shelves.find(x => x.id === shelf);
+      if (!sh) {
+        sh = { id: shelf, boxes: [] };
+        rk.shelves.push(sh);
+      }
+
+      // ✅ هنا كان الخطأ .. لازم نستخدم backticks ``
+      sh.boxes.push(${box} (${type}));
+    });
+
+    state.stores = Object.values(storesMap);
+    renderStores();
+
+  } catch (err) {
+    console.error("خطأ أثناء تحميل البيانات:", err);
+  }
 }
 
 function save() {
